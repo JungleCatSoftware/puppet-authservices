@@ -1,0 +1,14 @@
+{
+  "name": "junglecatsoftware-authservices",
+  "version": "0.1.0",
+  "author": "Jungle Cat Software",
+  "summary": "Puppet module to configure AuthServices",
+  "license": "GPLv3",
+  "source": "https://github.com/JungleCatSoftware/puppet-authservices",
+  "project_page": "https://github.com/JungleCatSoftware/puppet-authservices",
+  "issues_url": "https://github.com/JungleCatSoftware/puppet-authservices/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+
