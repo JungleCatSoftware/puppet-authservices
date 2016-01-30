@@ -14,10 +14,10 @@ define authservices::pythonwebapp (
   validate_string($venvpath)
 
   if ! $codesource {
-    fail("authservices::pythonwebapp::codesource is undefined")
+    fail('authservices::pythonwebapp::codesource is undefined')
   }
   if ! $bind {
-    fail("authservices::pythonwebapp::bind is undefined")
+    fail('authservices::pythonwebapp::bind is undefined')
   }
 
 
@@ -33,10 +33,10 @@ define authservices::pythonwebapp (
   }
 
   python::pyvenv { $venvpath:
-    ensure     => present,
-    version    => '3.4',
-    owner      => 'www-data',
-    group      => 'www-data',
+    ensure  => present,
+    version => '3.4',
+    owner   => 'www-data',
+    group   => 'www-data',
   }
 
   python::pip { 'gunicorn':
