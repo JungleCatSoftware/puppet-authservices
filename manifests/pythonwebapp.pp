@@ -1,22 +1,25 @@
 define authservices::pythonwebapp (
-  $appname    = $name,
-  $codesource = undef,
-  $bind       = undef,
+  $appname      = $name,
+  $bind         = undef,
+  $codesource   = undef,
+  $include_rest = false,
+  $venvpath     = "/srv/${name}"
 ) {
 
+  validate_bool($include_rest)
+
   validate_string($appname)
-  validate_string($codesource)
   validate_string($bind)
+  validate_string($codesource)
+  validate_string($venvpath)
 
   if ! $codesource {
     fail("authservices::pythonwebapp::codesource is undefined")
   }
-
   if ! $bind {
     fail("authservices::pythonwebapp::bind is undefined")
   }
 
-  $venvpath = "/srv/${name}"
 
   class { 'python':
     version    => '3.4',
@@ -25,26 +28,43 @@ define authservices::pythonwebapp (
     gunicorn   => present,
   }
 
-  Package['python'] ->
   package { 'python3.4-venv':
     ensure => installed,
-  } -> Python::Pyvenv <| |>
+  }
 
   python::pyvenv { $venvpath:
     ensure     => present,
     version    => '3.4',
     owner      => 'www-data',
     group      => 'www-data',
-  } ->
+  }
+
   python::pip { 'gunicorn':
     ensure     => '17.5',
     virtualenv => $venvpath,
-  } ->
-  python::gunicorn { $name:
+  }
+  python::pip { 'flask':
+    ensure     => present,
+    virtualenv => $venvpath,
+  }
+
+  if $include_rest {
+    python::pip { 'flask-restful':
+      ensure     => present,
+      virtualenv => $venvpath,
+    }
+  }
+
+  python::gunicorn { $appname:
     ensure     => present,
     bind       => $bind,
     virtualenv => $venvpath,
     dir        => $codesource,
-    appmodule  => "${name}:app",
+    appmodule  => "${appname}:app",
   }
+
+  Package['python'] -> Package['python3.4-venv'] -> Python::Pyvenv<| |>
+
+  Python::Pyvenv[$venvpath] -> Python::Pip<| virtualenv == $venvpath |>
+  -> Python::Gunicorn<| virtualenv == $venvpath |>
 }
