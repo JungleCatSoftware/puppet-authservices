@@ -21,11 +21,16 @@ define authservices::pythonwebapp (
   class { 'python':
     version    => '3.4',
     pip        => present,
+    dev        => present,
     virtualenv => present,
     gunicorn   => present,
   }
 
   package { 'python3.4-venv':
+    ensure => installed,
+  }
+
+  package { 'build-essential':
     ensure => installed,
   }
 
@@ -54,6 +59,9 @@ define authservices::pythonwebapp (
   }
 
   Package['python'] -> Package['python3.4-venv'] -> Python::Pyvenv<| |>
+
+  Package['build-essential'] -> Python::Pip<| |>
+  Package['build-essential'] -> Python::Requirements<| |>
 
   Python::Pyvenv[$venvpath] -> Python::Pip<| virtualenv == $venvpath |>
   Python::Pyvenv[$venvpath] -> Python::Requirements<| virtualenv == $venvpath |>
