@@ -2,11 +2,8 @@ define authservices::pythonwebapp (
   $appname      = $name,
   $bind         = undef,
   $codesource   = undef,
-  $include_rest = false,
   $venvpath     = "/srv/${name}"
 ) {
-
-  validate_bool($include_rest)
 
   validate_string($appname)
   validate_string($bind)
@@ -43,16 +40,9 @@ define authservices::pythonwebapp (
     ensure     => '17.5',
     virtualenv => $venvpath,
   }
-  python::pip { 'flask':
-    ensure     => present,
-    virtualenv => $venvpath,
-  }
 
-  if $include_rest {
-    python::pip { 'flask-restful':
-      ensure     => present,
-      virtualenv => $venvpath,
-    }
+  python::requirements { "${codesource}/requirements.txt":
+    virtualenv => $venvpath
   }
 
   python::gunicorn { $appname:
@@ -66,5 +56,7 @@ define authservices::pythonwebapp (
   Package['python'] -> Package['python3.4-venv'] -> Python::Pyvenv<| |>
 
   Python::Pyvenv[$venvpath] -> Python::Pip<| virtualenv == $venvpath |>
-  -> Python::Gunicorn<| virtualenv == $venvpath |>
+  Python::Pyvenv[$venvpath] -> Python::Requirements<| virtualenv == $venvpath |>
+  Python::Pip<| virtualenv == $venvpath |> -> Python::Gunicorn<| virtualenv == $venvpath |>
+  Python::Requirements<| virtualenv == $venvpath |> -> Python::Gunicorn<| virtualenv == $venvpath |>
 }
