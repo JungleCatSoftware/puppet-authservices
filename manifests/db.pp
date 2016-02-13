@@ -14,7 +14,9 @@ class authservices::db {
     seeds                 => $::ipaddress_eth1,
   }
 
+  include limits
 
   Class['cassandra::datastax_repo'] -> Class['cassandra']
   Class['cassandra::java'] -> Class['cassandra']
+  Class['limits'] ~> Service['cassandra']
 }

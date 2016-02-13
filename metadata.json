@@ -9,6 +9,7 @@
   "issues_url": "https://github.com/JungleCatSoftware/puppet-authservices/issues",
   "dependencies": [
     {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
+    {"name":"erwbgy/limits","version_requirement":">= 0.3.1"},
     {"name":"stankevich-python","version_requirement":">= 1.10.0"},
     {"name":"locp-cassandra","version_requirement":">= 1.12.0"}
   ]
