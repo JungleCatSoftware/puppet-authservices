@@ -47,7 +47,10 @@ define authservices::pythonwebapp (
   }
 
   python::requirements { "${codesource}/requirements.txt":
-    virtualenv => $venvpath
+    virtualenv             => $venvpath,
+    owner                  => 'www-data',
+    group                  => 'www-data',
+    fix_requirements_owner => false,
   }
 
   python::gunicorn { $appname:
