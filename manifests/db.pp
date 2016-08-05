@@ -2,6 +2,7 @@ class authservices::db {
 
   include cassandra::datastax_repo
   include cassandra::java
+  include limits
 
   class { 'cassandra':
     cluster_name          => 'AuthServices',
@@ -13,8 +14,6 @@ class authservices::db {
     rpc_address           => $::ipaddress_eth1,
     seeds                 => $::ipaddress_eth1,
   }
-
-  include limits
 
   Class['cassandra::datastax_repo'] -> Class['cassandra']
   Class['cassandra::java'] -> Class['cassandra']
